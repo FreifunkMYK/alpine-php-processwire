@@ -29,7 +29,10 @@ Group ID:
 ```bash
 chown -R 100:101 /data/sites/example.com/htdocs
 ```
-
+If you are using this image for development on a Linux box, then you will want to edit these files as a different user. You can do that using the following command:
+```
+setfacl -Rm u:<user>:rwX,g:<user>:rwX,d:g:<user>:rwX /data/sites/<site-domain>.com
+```
 ### Say you want to run a multiple PW sites on a VPS with Docker
 
 ```bash
