@@ -1,10 +1,10 @@
-##### This image is being maintained. Fork it and change it fit your needs. Upgrade your site using the upgrade strategy on wordpressdocker.com
+##### This image is a fork from http://www.wordpressdocker.com project and being maintained. Fork it and change it fit your needs.
 
-Full documentation for this project can be found here: http://www.wordpressdocker.com/
+Full documentation for this project can be found here: not yet :-(
 
-# Lightweight WordPress PHP7 PHP-FPM7 & Nginx Docker Image
+# Lightweight ProcessWire PHP7 PHP-FPM7 & Nginx Docker Image
 
-Lightwight Docker image for the (latest) PHP-FPM and Nginx to run WordPress based on [AlpineLinux](http://alpinelinux.org)
+Lightwight Docker image for the (latest) PHP-FPM and Nginx to run ProcessWire based on [AlpineLinux](http://alpinelinux.org)
 
 * Image size only ~131MB !
 * Very new packages (alpine:edge) 2016-07-21:
@@ -17,9 +17,9 @@ Lightwight Docker image for the (latest) PHP-FPM and Nginx to run WordPress base
 
 ```bash
 
-mkdir -p /data/sites/etopian.com/htdocs
+mkdir -p /data/sites/example.com/htdocs
 
-sudo docker run -e VIRTUAL_HOST=etopian.com,www.etopian.com -v /data/sites/etopian.com:/DATA -p 80:80 etopian/alpine-php-wordpress
+sudo docker run -e VIRTUAL_HOST=example.com,www.example.com -v /data/sites/example.com:/DATA -p 80:80 gebeer/alpine-php-processwire
 
 ```
 The following user and group id are used, the files should be set to this:
@@ -27,30 +27,30 @@ User ID:
 Group ID: 
 
 ```bash
-chown -R 100:101 /data/sites/etopian.com/htdocs
+chown -R 100:101 /data/sites/example.com/htdocs
 ```
 
-### Say you want to run a multiple WP sites on a VPS with Docker
+### Say you want to run a multiple PW sites on a VPS with Docker
 
 ```bash
 
 sudo docker run -p 80:80 etopian/nginx-proxy
-mkdir -p /data/sites/etopian.com/htdocs
+mkdir -p /data/sites/example.com/htdocs
 
-sudo docker run -e VIRTUAL_HOST=etopian.com,www.etopian.com -v /data/sites/etopian.com:/DATA etopian/alpine-php-wordpress
+sudo docker run -e VIRTUAL_HOST=example.com,www.example.com -v /data/sites/example.com:/DATA gebeer/alpine-processwire
 
 mkdir -p /data/sites/etopian.net/htdocs
-sudo docker run -e VIRTUAL_HOST=etopian.net,www.etopian.net -v /data/sites/etopian.net:/DATA etopian/alpine-php-wordpress
+sudo docker run -e VIRTUAL_HOST=example.net,www.example.net -v /data/sites/example.net:/DATA gebeer/alpine-processwire
 ```
 
-Populate /data/sites/etopian.com/htdocs and  /data/sites/etopian.net/htdocs with your WP files. See http://www.wordpressdocker.com if you need help on how to configure your database.
+Populate /data/sites/example.com/htdocs and  /data/sites/example.net/htdocs with your PW files. See http://www.wordpressdocker.com if you need help on how to configure your database.
 
 The following user and group id are used, the files should be set to this:
 User ID: 
 Group ID: 
 
 ```bash
-chown -R 100:101 /data/sites/etopian.com/htdocs
+chown -R 100:101 /data/sites/example.com/htdocs
 ```
 
 
@@ -61,15 +61,15 @@ chown -R 100:101 /data/sites/etopian.com/htdocs
 * `logs`: Nginx/PHP error logs
 * 
 
-### WP-CLI
+### PW-CLI
 
-This image now includes WP-CLI wpcli.org baked in... So you can. Please `su nginx` before executing or else you can potentially compromise your host.
+This image will hopefully soon include wireshell - an extendable ProcessWire command line interface.
 
 ```
 docker exec -it <container_name> bash
 su nginx
 cd /DATA/htdocs
-wp-cli cli
+...
 ```
 
 ### Multisite
@@ -89,14 +89,7 @@ To modify php.ini variable, simply edit php-fpm.ini and add php_flag[variable] =
 php_flag[display_errors] = on
 ```
 
-Additional documentation on http://www.wordpressdocker.com
+Additional documentation on not yet there
 
-## Questions or Support
-
-https://gitter.im/etopian/devoply
-
-## Docker WordPress Control Panel
-
-DEVOPly is a free hosting control panel which does everything taught in this tutorial automatically and much more, backups, staging/dev/prod, code editor, Github/Bitbucket deployments, DNS, WordPress Management. https://www.devoply.com
 
 
