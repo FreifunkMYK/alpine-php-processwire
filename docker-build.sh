@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build -t etopian/alpine-php-wordpress .
+docker build -t gebeer/alpine-php-processwire .
