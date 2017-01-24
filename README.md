@@ -15,10 +15,20 @@ Lightwight Docker image for the (latest) PHP-FPM and Nginx to run ProcessWire ba
 ## A simple example
 ### Say you want to run a single site on a VPS with Docker
 
+### First run the nginx proxy container
+This sits in front of all of your sites at port 80 and 443 serving all your sites. It was automatically reconfigure itself and reload itself when you create a new ProcessWire site container.
+
 ```bash
+docker run -d --name nginx -p 80:80 -p 443:443 -v /etc/nginx/htpasswd:/etc/nginx/htpasswd -v /etc/nginx/vhost.d:/etc/nginx/vhost.d:ro -v /etc/nginx/certs:/etc/nginx/certs -v /var/run/docker.sock:/tmp/docker.sock:ro etopian/nginx-proxy
+```
 
+### Create directory to serve your files
+```bash
 mkdir -p /data/sites/example.com/htdocs
+```
 
+### Run the ProcessWire container
+```bash
 sudo docker run -e VIRTUAL_HOST=example.com,www.example.com -v /data/sites/example.com:/DATA -p 80:80 gebeer/alpine-php-processwire
 
 ```
