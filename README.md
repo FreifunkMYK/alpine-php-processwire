@@ -55,7 +55,7 @@ docker exec -it mariadb bash
 export TERM=xterm
 cd /tmp
 # login to mariadb
-mysql -uroot -pmyROOTPASSOWRD -h 172.17.0.1 -P 3306
+mysql -uroot -pmyROOTPASSOWRD
 
 # create the db in mariadb
 CREATE DATABASE example_com;
@@ -64,9 +64,24 @@ CREATE USER 'example_com'@'%' IDENTIFIED BY 'mydbpassword';
 GRANT ALL PRIVILEGES ON  example_com.* TO 'example_com'@'%';
 # import your db-dump
 mysql -uroot -pmyROOTPASSOWRD example_com < mydatabase.mysql
-
+# leave the mysql client
+quit
 # leave the container
 exit
+
+```
+
+#### Configure ProcessWire to use that database
+```php
+/**
+ * Installer: Database Configuration
+ * 
+ */
+$config->dbHost = '172.17.0.1';
+$config->dbName = 'example_com';
+$config->dbUser = 'example_com';
+$config->dbPass = 'mydbpassword';
+$config->dbPort = '3306';
 
 ```
 
