@@ -62,10 +62,10 @@ CREATE DATABASE example_com;
 # create a db user
 CREATE USER 'example_com'@'%' IDENTIFIED BY 'mydbpassword';
 GRANT ALL PRIVILEGES ON  example_com.* TO 'example_com'@'%';
-# import your db-dump
-mysql -uroot -pmyROOTPASSOWRD example_com < mydatabase.mysql
 # leave the mysql client
 quit
+# import your db-dump
+mysql -uroot -pmyROOTPASSOWRD example_com < mydatabase.mysql
 # leave the container
 exit
 
