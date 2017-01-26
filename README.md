@@ -90,10 +90,16 @@ $config->dbPort = '3306';
 sudo docker run -d --name example_com -e VIRTUAL_HOST=example.com,www.example.com -v /data/sites/example.com:/DATA -p 80:80 gebeer/alpine-php-processwire
 
 ```
-
+#### Conclusion
 Now you have 3 containers running: nginx with the nginx-proxy, example_com with your ProcessWire site and mariadb which serves the database.
 
-If you set this up for development, you can now access the site at http://localhost. 
+If you set this up for development, you can now access the site at http://localhost.
+
+Now that your containers are setup, you can stop/start the whole stack with
+```bash
+sudo docker (stop)start mariadb nginx example_com
+
+```
 
 
 ### Volume structure
