@@ -6,66 +6,79 @@ Full documentation for this project can be found here: not yet :-(
 
 Lightwight Docker image for the (latest) PHP-FPM and Nginx to run ProcessWire based on [AlpineLinux](http://alpinelinux.org)
 
-* Image size only ~131MB !
+* Image size only ~150MB !
 * Very new packages (alpine:edge) 2016-07-21:
   * [PHP](http://pkgs.alpinelinux.org/package/main/x86/php) 7.0.13
   * [Nginx](http://pkgs.alpinelinux.org/package/main/x86/nginx) nginx/1.10.2
   * Memory usage is around 50mb on a simple install.
 
 ## A simple example
-### Say you want to run a single site on a VPS with Docker
+### Say you want to run a single site with Docker
 
-### First run the nginx proxy container
+#### First run the nginx proxy container
 This sits in front of all of your sites at port 80 and 443 serving all your sites. It was automatically reconfigure itself and reload itself when you create a new ProcessWire site container.
 
 ```bash
 docker run -d --name nginx -p 80:80 -p 443:443 -v /etc/nginx/htpasswd:/etc/nginx/htpasswd -v /etc/nginx/vhost.d:/etc/nginx/vhost.d:ro -v /etc/nginx/certs:/etc/nginx/certs -v /var/run/docker.sock:/tmp/docker.sock:ro etopian/nginx-proxy
 ```
 
-### Create directory to serve your files
+#### Create directory to serve your files and copy all PW files into that directory
 ```bash
 mkdir -p /data/sites/example.com/htdocs
 ```
 
-### Run the ProcessWire container
-```bash
-sudo docker run -e VIRTUAL_HOST=example.com,www.example.com -v /data/sites/example.com:/DATA -p 80:80 gebeer/alpine-php-processwire
-
-```
 The following user and group id are used, the files should be set to this:
-User ID: 
-Group ID: 
+User ID: 100
+Group ID: 101
 
 ```bash
 chown -R 100:101 /data/sites/example.com/htdocs
 ```
+
 If you are using this image for development on a Linux box, then you will want to edit these files as a different user. You can do that using the following command:
 ```
 setfacl -Rm u:<user>:rwX,g:<user>:rwX,d:g:<user>:rwX /data/sites/<site-domain>.com
 ```
-### Say you want to run a multiple PW sites on a VPS with Docker
 
+#### Run a container for your database
 ```bash
+docker run -d --name mariadb -p 172.17.0.1:3306:3306 -e MYSQL_ROOT_PASSWORD=myROOTPASSOWRD -v /data/mysql:/var/lib/mysql mariadb
 
-sudo docker run -p 80:80 etopian/nginx-proxy
-mkdir -p /data/sites/example.com/htdocs
-
-sudo docker run -e VIRTUAL_HOST=example.com,www.example.com -v /data/sites/example.com:/DATA gebeer/alpine-processwire
-
-mkdir -p /data/sites/etopian.net/htdocs
-sudo docker run -e VIRTUAL_HOST=example.net,www.example.net -v /data/sites/example.net:/DATA gebeer/alpine-processwire
 ```
 
-Populate /data/sites/example.com/htdocs and  /data/sites/example.net/htdocs with your PW files. See http://www.wordpressdocker.com if you need help on how to configure your database.
-
-The following user and group id are used, the files should be set to this:
-User ID: 
-Group ID: 
-
+#### Create your DB and import your DB Dump
 ```bash
-chown -R 100:101 /data/sites/example.com/htdocs
+# copy the db-dump into the database container
+docker cp mydatabase.sql mariadb:/tmp/mydatabase.mysql
+# open a shell inside the database container
+docker exec -it mariadb bash
+export TERM=xterm
+cd /tmp
+# login to mariadb
+mysql -uroot -pmyROOTPASSOWRD -h 172.17.0.1 -P 3306
+
+# create the db in mariadb
+CREATE DATABASE example_com;
+# create a db user
+CREATE USER 'example_com'@'%' IDENTIFIED BY 'mydbpassword';
+GRANT ALL PRIVILEGES ON  example_com.* TO 'example_com'@'%';
+# import your db-dump
+mysql -uroot -pmyROOTPASSOWRD example_com < mydatabase.mysql
+
+# leave the container
+exit
+
 ```
 
+#### Run the ProcessWire container
+```bash
+sudo docker run -d --name example_com -e VIRTUAL_HOST=example.com,www.example.com -v /data/sites/example.com:/DATA -p 80:80 gebeer/alpine-php-processwire
+
+```
+
+Now you have 3 containers running: nginx with the nginx-proxy, example_com with your ProcessWire site and mariadb which serves the database.
+
+If you set this up for development, you can now access the site at http://localhost. 
 
 
 ### Volume structure
@@ -74,26 +87,7 @@ chown -R 100:101 /data/sites/example.com/htdocs
 * `logs`: Nginx/PHP error logs
 * 
 
-### PW-CLI
-
-This image will hopefully soon include wireshell - an extendable ProcessWire command line interface.
-
-```
-docker exec -it <container_name> bash
-su nginx
-cd /DATA/htdocs
-...
-```
-
-### Multisite
-
-For each multisite you need to give the domain as the -e VIRTUAL_HOST parameter. For instance VIRTUAL_HOST=site1.com,www.site1.com,site2.com,www.site2.com ... if you wish to add more sites you need to recreate the container.
-
-### Upload limit
-
-The upload limit is 2 gigabyte.
-
-### Change php.ini value
+### Change php.ini values
 modify files/php-fpm.conf
 
 To modify php.ini variable, simply edit php-fpm.ini and add php_flag[variable] = value.
@@ -102,7 +96,7 @@ To modify php.ini variable, simply edit php-fpm.ini and add php_flag[variable] =
 php_flag[display_errors] = on
 ```
 
-Additional documentation on not yet there
+Additional documentation: not yet here
 
 
 
