@@ -9,7 +9,7 @@ LABEL   devoply.type="site" \
         devoply.recommend="redis" \
         devoply.description="ProcessWire on Nginx and PHP-FPM." \
         devoply.name="ProcessWire" \
-        devoply.params="docker run -d --name {container_name} -e VIRTUAL_HOST={virtual_hosts} -v /data/sites/{domain_name}:/DATA gebeer/alpine-php7-processwire"
+        devoply.params="docker run -d --name {container_name} -e VIRTUAL_HOST={virtual_hosts} -v /data/sites/{domain_name}:/DATA gebeer/alpine-php-processwire"
 
 
 
